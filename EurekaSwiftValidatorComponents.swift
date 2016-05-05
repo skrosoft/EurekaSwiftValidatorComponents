@@ -1,9 +1,7 @@
 //
 //  EurekaCustomCells.swift
-//  Made In Italy
 //
 //  Created by Demetrio Filocamo on 29/01/2016.
-//  Copyright © 2016 Made In Italy App Ltd. All rights reserved.
 //
 
 import UIKit
