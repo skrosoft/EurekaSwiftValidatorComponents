@@ -2,4 +2,4 @@ use_frameworks!
 link_with 'Examples'
 
 pod 'Eureka'
-pod 'SwiftValidator', '3.0.3'
+pod 'SwiftValidator'

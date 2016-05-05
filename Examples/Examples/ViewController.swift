@@ -12,75 +12,113 @@ import SwiftValidator
 
 class ViewController: FormViewController {
 
+    var testHidden = true
+
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+
         form =
-            Section("Insert your data")
-            
-            <<< SVTextRow() {
-                $0.title = "Name"
-                $0.placeholder = "Insert your full name"
-                $0.rules = [RequiredRule(), FullNameRule(), MinLengthRule(length: 5), MaxLengthRule(length: 10)]
-                $0.autoValidation = false
+                Section("Insert your data")
+
+                <<< SVTextRow("hidden") {
+            $0.title = "Hidden"
+            $0.placeholder = "Hidden field"
+            $0.rules = [RequiredRule(), FullNameRule(), MinLengthRule(length: 5), MaxLengthRule(length: 20)]
+            $0.autoValidation = false
+            $0.hidden = Condition.Function([""], {
+                (form) -> Bool in
+                return self.testHidden
+            })
+        }
+
+                <<< SVTextRow() {
+            $0.title = "Name"
+            $0.placeholder = "Insert your full name"
+            $0.rules = [RequiredRule(), FullNameRule(), MinLengthRule(length: 5), MaxLengthRule(length: 20)]
+            $0.autoValidation = false
+        }
+
+                <<< SVTextRow() {
+            $0.title = "Email"
+            $0.placeholder = ""
+            $0.rules = [RequiredRule(), EmailRule(message: "Please insert a valid email address")]
+            $0.autoValidation = false
+        }
+
+                <<< SVTextRow() {
+            $0.title = "Street"
+            $0.placeholder = "First line"
+            $0.rules = [RequiredRule(), MinLengthRule(length: 5), MaxLengthRule(length: 30)]
+            $0.autoValidation = false
+        }
+
+                <<< SVTextRow() {
+            $0.title = " "
+            $0.placeholder = "Optional second line"
+            $0.autoValidation = false
+        }
+
+                <<< SVTextRow() {
+            $0.title = "City"
+            $0.placeholder = ""
+            $0.rules = [RequiredRule()]
+            $0.autoValidation = false
+        }
+
+                <<< SVTextRow() {
+            $0.title = "Post Code"
+            $0.placeholder = ""
+            $0.rules = [RequiredRule()]
+            $0.autoValidation = false
+        }
+
+                <<< SVTextRow() {
+            $0.title = "Country"
+            $0.placeholder = ""
+            $0.value = "United Kingdom"
+            $0.rules = [RequiredRule()]
+            $0.autoValidation = false
+        }
+
+
+                +++ Section("") {
+            $0.tag = "result"
+        }
+
+                <<< SwitchRow() {
+            $0.title = "Hidden field?"
+            $0.value = self.testHidden
+        }.onChange { [weak self] row in
+            if row.value ?? false {
+                self!.testHidden = true
             }
-            
-            <<< SVTextRow() {
-                $0.title = "Email"
-                $0.placeholder = ""
-                $0.rules = [RequiredRule(), EmailRule()]
-                $0.autoValidation = false
+            else{
+                self!.testHidden = false
             }
-            
-            <<< SVTextRow() {
-                $0.title = "Street"
-                $0.placeholder = "First line"
-                $0.rules = [RequiredRule(), MinLengthRule(length: 5), MaxLengthRule(length: 10)]
-                $0.autoValidation = false
-            }
-            
-            <<< SVTextRow() {
-                $0.title = " "
-                $0.placeholder = "Optional second line"
-                $0.autoValidation = false
-            }
-            
-            <<< SVTextRow() {
-                $0.title = "City"
-                $0.placeholder = ""
-                $0.rules = [RequiredRule()]
-                $0.autoValidation = false
-            }
-            
-            <<< SVTextRow() {
-                $0.title = "Post Code"
-                $0.placeholder = ""
-                $0.rules = [RequiredRule()]
-                $0.autoValidation = false
-            }
-            
-            <<< SVTextRow() {
-                $0.title = "Country"
-                $0.placeholder = ""
-                $0.value = "United Kingdom"
-                $0.rules = [RequiredRule()]
-                $0.autoValidation = false
-                }
-            
-            
-            +++ Section("")
+            let hiddenField = self!.form.rowByTag("hidden")
+            hiddenField!.evaluateHidden()
+        }
+
+                <<< LabelRow("formValid") {
+            $0.title = "Form valid?"
+            $0.value = "No"
+        }
     }
-    
+
     @IBAction func saveClicked(sender: AnyObject) {
         let dataValid = form.validateAll()
-        
+
         if dataValid {
             NSLog("Valid")
         } else {
             NSLog("Invalid")
         }
+
+        let result = form.rowByTag("formValid")
+        result!.baseValue = dataValid ? "Yes" : "No"
+        result!.updateCell()
     }
-    
+
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
