@@ -32,6 +32,10 @@ open class _SVFieldCell<T>: _FieldCell<T>, SVTextFieldCell where T: Equatable, T
     required public init(style: UITableViewCellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
     }
+    
+    required public init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
 
     lazy open var validationLabel: UILabel = {
         [unowned self] in
@@ -59,7 +63,7 @@ open class _SVFieldCell<T>: _FieldCell<T>, SVTextFieldCell where T: Equatable, T
         let sameLeading: NSLayoutConstraint = NSLayoutConstraint(item: self.contentView, attribute: .leading, relatedBy: .equal, toItem: self.validationLabel, attribute: .leading, multiplier: 1, constant: -20)
         let sameTrailing: NSLayoutConstraint = NSLayoutConstraint(item: self.textField, attribute: .trailing, relatedBy: .equal, toItem: self.validationLabel, attribute: .trailing, multiplier: 1, constant: 0)
         let sameBottom: NSLayoutConstraint = NSLayoutConstraint(item: self.contentView, attribute: .bottom, relatedBy: .equal, toItem: self.validationLabel, attribute: .bottom, multiplier: 1, constant: 4)
-        var all: [NSLayoutConstraint] = [sameLeading, sameTrailing, sameBottom]
+        let all: [NSLayoutConstraint] = [sameLeading, sameTrailing, sameBottom]
 //        all += fixedHeight
 //        all += yPosition
 //        all += xPosition
@@ -123,12 +127,12 @@ open class _SVFieldCell<T>: _FieldCell<T>, SVTextFieldCell where T: Equatable, T
     }
 
     func resetField() {
-        validationLabel.hidden = true
-        textField.textColor = UIColor.blackColor()
-        self.textLabel?.textColor = UIColor.blackColor()
+        validationLabel.isHidden = true
+        textField.textColor = UIColor.black
+        self.textLabel?.textColor = UIColor.black
     }
 
-    func showError(_ field: UITextField, error: ValidationError) {
+    func showError(_ field: UITextField, error: SwiftValidator.ValidationError) {
         // turn the field to red
         field.textColor = errorColor
         if let ph = field.placeholder {
@@ -169,7 +173,7 @@ open class _SVFieldCell<T>: _FieldCell<T>, SVTextFieldCell where T: Equatable, T
 }
 
 //             FieldRow<T: Any, Cell: CellType where Cell: BaseCell, Cell: TypedCellType, Cell: TextFieldCell, Cell.Value == T>: Row<T, Cell>, FieldRowConformance, KeyboardReturnHandler
-open class SVFieldRow<T: Any, Cell: CellType>: FieldRow<T, Cell> where Cell: BaseCell, Cell: TypedCellType, Cell: SVTextFieldCell, Cell.Value == T {
+open class SVFieldRow<T: Any, Cell: CellType>: FieldRow<Cell> where Cell: BaseCell, Cell: TypedCellType, Cell: SVTextFieldCell, Cell.Value == T {
     public required init(tag: String?) {
         super.init(tag: tag)
     }
@@ -231,7 +235,7 @@ open class _SVIntRow: SVFieldRow<Int, SVIntCell> {
     public required init(tag: String?) {
         super.init(tag: tag)
         let numberFormatter = NumberFormatter()
-        numberFormatter.locale = .current()
+        numberFormatter.locale = NSLocale.current
         numberFormatter.numberStyle = .decimal
         numberFormatter.minimumFractionDigits = 0
         formatter = numberFormatter
@@ -333,12 +337,16 @@ open class SVTextCell: _SVFieldCell<String>, CellType  {
     required public init(style: UITableViewCellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
     }
+    
+    required public init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
 
     open override func setup() {
         super.setup()
-        textField.autocorrectionType = .Default
-        textField.autocapitalizationType = .Sentences
-        textField.keyboardType = .Default
+        textField.autocorrectionType = .default
+        textField.autocapitalizationType = .sentences
+        textField.keyboardType = .default
     }
 }
 
@@ -347,12 +355,16 @@ open class SVIntCell : _SVFieldCell<Int>, CellType {
     required public init(style: UITableViewCellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
     }
+    
+    required public init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
 
     open override func setup() {
         super.setup()
-        textField.autocorrectionType = .Default
-        textField.autocapitalizationType = .None
-        textField.keyboardType = .NumberPad
+        textField.autocorrectionType = .default
+        textField.autocapitalizationType = .none
+        textField.keyboardType = .numberPad
     }
 }
 
@@ -361,12 +373,16 @@ open class SVEmailCell : _SVFieldCell<String>, CellType {
     required public init(style: UITableViewCellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
     }
+    
+    required public init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
 
     open override func setup() {
         super.setup()
-        textField.autocorrectionType = .No
-        textField.autocapitalizationType = .None
-        textField.keyboardType = .EmailAddress
+        textField.autocorrectionType = .no
+        textField.autocapitalizationType = .none
+        textField.keyboardType = .emailAddress
     }
 }
 
@@ -375,10 +391,14 @@ open class SVPhoneCell : _SVFieldCell<String>, CellType {
     required public init(style: UITableViewCellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
     }
+    
+    required public init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
 
     open override func setup() {
         super.setup()
-        textField.keyboardType = .PhonePad
+        textField.keyboardType = .phonePad
     }
 }
 
@@ -388,12 +408,16 @@ open class SVPasswordCell: _SVFieldCell<String>, CellType  {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
     }
     
+    required public init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
     open override func setup() {
         super.setup()
-        textField.autocorrectionType = .No
-        textField.autocapitalizationType = .None
-        textField.keyboardType = .ASCIICapable
-        textField.secureTextEntry = true
+        textField.autocorrectionType = .no
+        textField.autocapitalizationType = .none
+        textField.keyboardType = .asciiCapable
+        textField.isSecureTextEntry = true
     }
 }
 
